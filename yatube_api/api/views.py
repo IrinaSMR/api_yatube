@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404
-from posts.models import Comment, Group, Post
+
 from rest_framework import status, viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from .serializers import CommentSerializer, GroupSerializer, PostSerializer
+from posts.models import Comment, Group, Post
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -29,7 +29,7 @@ class PostViewSet(viewsets.ModelViewSet):
         if request.user == post.author:
             post.delete()
             return Response('Post delete', status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_403_FORBIDDEN)        
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
@@ -44,7 +44,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
         return post.comments
-        
+
     def create(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
         serializer = self.serializer_class(data=request.data)
@@ -69,5 +69,8 @@ class CommentViewSet(viewsets.ModelViewSet):
         comment = get_object_or_404(self.queryset, id=pk, post=post)
         if request.user == comment.author:
             comment.delete()
-            return Response('Comment delete', status=status.HTTP_204_NO_CONTENT)
+            return Response(
+                'Comment delete',
+                status=status.HTTP_204_NO_CONTENT
+            )
         return Response(status=status.HTTP_403_FORBIDDEN)
