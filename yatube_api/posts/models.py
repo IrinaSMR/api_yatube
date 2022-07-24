@@ -19,14 +19,21 @@ class Post(models.Model):
         'Дата публикации', auto_now_add=True
     )
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='posts'
+        User,
+        on_delete=models.CASCADE,
+        related_name='posts',
+        verbose_name='Автор'
     )
     image = models.ImageField(
         upload_to='posts/', null=True, blank=True
     )  # поле для картинки
     group = models.ForeignKey(
-        Group, on_delete=models.CASCADE,
-        related_name="posts", blank=True, null=True
+        Group,
+        on_delete=models.SET_NULL,
+        related_name="posts",
+        blank=True,
+        null=True,
+        verbose_name='Группа',
     )
 
     def __str__(self):
